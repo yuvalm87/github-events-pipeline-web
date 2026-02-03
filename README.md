@@ -27,9 +27,25 @@ README.md           # This file
    pip install -r requirements.txt
    ```
 
+For running tests during development, install dev dependencies:
+
+```bash
+pip install -r requirements-dev.txt
+```
+
 2. **Database location:**
    - DuckDB file will be created at `data/duckdb/github_events.duckdb` on first load
    - Database directory is created automatically if it doesn't exist
+
+## Configuration
+
+The following environment variables can override default paths:
+
+- `DATA_DIR` (default: `data/`) — Root directory for data storage
+- `RAW_DIR` (default: `data/raw/`) — Location for raw JSONL batch files
+- `DUCKDB_PATH` (default: `data/duckdb/github_events.duckdb`) — Path to DuckDB database file
+
+These are mainly useful for tests and custom deployments.
 
 ## Running the Service
 
@@ -57,6 +73,7 @@ GET /health
 
 Returns: `{"status": "ok"}`
 
+
 ### Ingest Events
 
 Fetches the latest GitHub public events from `https://api.github.com/events`, enriches them with ingestion metadata, and writes JSONL batch files to `data/raw/`.
@@ -81,9 +98,10 @@ POST /ingest
 **Details:**
 - Runs asynchronously in the background
 - Fetches events from GitHub's public events API
-- Enriches each event with `_ingested_at` timestamp
+- Enriches each event with `ingested_at` timestamp
 - Saves events in JSONL format (~150 events per batch file)
 - Files are immutable and stored at: `data/raw/events_YYYYMMDD_HHMMSS_batch_NNN.jsonl`
+
 
 ### Load Events to DuckDB
 
@@ -113,10 +131,20 @@ POST /load
 - Scans `data/raw/` for `.jsonl` files (sorted by filename)
 - Computes SHA256 hash of each file to detect changes
 - Skips files already loaded with identical hash (idempotent)
-- Reads JSONL using DuckDB's `read_json_auto()`
+- Parses JSONL line-by-line for robust per-record error isolation.
 - Inserts events into `events` table with deduplication by `event_id`
 - Tracks loaded files in `loaded_files` table (prevents re-processing)
 - Uses transactions per file (rollback on failure, continues with next file)
+
+
+## Running Tests
+
+Install dev dependencies and run:
+
+```bash
+pip install -r requirements-dev.txt
+pytest -q
+```
 
 ## Database Schema
 
@@ -208,7 +236,7 @@ GROUP BY event_type
 ORDER BY count DESC;
 ```
 
-Example output:
+Sample output (will vary):
 ```
 PushEvent          | 250
 CreateEvent        | 120

@@ -20,6 +20,7 @@ import hashlib
 import json
 import logging
 from pathlib import Path
+import os
 from typing import NamedTuple
 
 import duckdb
@@ -28,7 +29,9 @@ from app.db import init_database, get_db_connection
 
 logger = logging.getLogger(__name__)
 
-RAW_DATA_DIR = Path(__file__).parent.parent / "data" / "raw"
+DEFAULT_DATA_DIR = Path(__file__).parent.parent / "data"
+DATA_DIR = Path(os.environ.get("DATA_DIR", str(DEFAULT_DATA_DIR)))
+RAW_DATA_DIR = DATA_DIR / "raw"
 
 
 class LoadResult(NamedTuple):
@@ -107,13 +110,20 @@ def load_events_from_jsonl(conn: duckdb.DuckDBPyConnection, file_path: Path) -> 
                 except Exception as e:
                     logger.warning(f"Error parsing timestamps for event {event_id}: {e}")
                 
-                # Insert into database with ON CONFLICT handling
+                # Skip if event_id already exists (event-level dedupe)
                 try:
+                    exists = conn.execute(
+                        "SELECT 1 FROM events WHERE event_id = ? LIMIT 1",
+                        [event_id]
+                    ).fetchone()
+                    if exists:
+                        continue
+
+                    # Insert into database; count only actual inserts
                     conn.execute("""
                         INSERT INTO events 
                         (event_id, event_type, created_at, ingested_at, actor_id, actor_login, repo_id, repo_name, payload, raw, source_file)
                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                        ON CONFLICT (event_id) DO NOTHING
                     """, [
                         event_id,
                         event_type,
