@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+.env
+
+# Data outputs
+data/raw/
+data/db/
+*.duckdb
+
+# IDE
+.vscode/
+.cursor/
+
+# macOS
+.DS_Store
