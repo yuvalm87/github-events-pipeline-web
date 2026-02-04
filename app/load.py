@@ -248,6 +248,16 @@ def load_all_events() -> LoadResult:
             f"skipped={skipped_files}, inserted_events={inserted_events}"
         )
         
+        # Create (or recreate) nested views after loading events
+        sql_file = Path(__file__).parent / "sql" / "repo_events_nested.sql"
+        if sql_file.exists():
+            with open(sql_file, "r") as f:
+                sql_script = f.read()
+            conn.execute(sql_script)
+            logger.info("Created/refreshed nested views from repo_events_nested.sql")
+        else:
+            logger.warning(f"SQL file not found: {sql_file}")
+        
         elapsed_ms = int((time.perf_counter() - start_time) * 1000)
         
         from app.db import get_db_path
@@ -259,6 +269,17 @@ def load_all_events() -> LoadResult:
             duration_ms=elapsed_ms,
             db_path=get_db_path()
         )
-        
     finally:
         conn.close()
+
+
+
+
+
+
+
+
+
+
+
+
