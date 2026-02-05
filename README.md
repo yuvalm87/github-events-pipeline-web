@@ -63,6 +63,72 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 
 The API will be available at `http://localhost:8000`.
 
+## Running with Docker
+
+The service can be containerized using Docker and Docker Compose for easy deployment with persistent data storage.
+
+### Build and Run with Docker Compose
+
+1. **Build the image and start the service:**
+   ```bash
+   docker compose up --build
+   ```
+
+   This will:
+   - Build a Docker image from the Dockerfile
+   - Start the FastAPI service on port 8000
+   - Mount the `data/` directory as a volume for persistent storage of raw JSONL files and DuckDB database
+
+2. **Access the service:**
+   - API: `http://localhost:8000`
+   - OpenAPI docs: `http://localhost:8000/docs`
+
+3. **Stop the service:**
+   ```bash
+   docker compose down
+   ```
+
+### Example API Calls with Docker
+
+Once the container is running, you can interact with the API:
+
+```bash
+# Health check
+curl http://localhost:8000/health
+
+# Ingest events from GitHub
+curl -X POST http://localhost:8000/ingest
+
+# Load JSONL files into DuckDB
+curl -X POST http://localhost:8000/load
+
+# Query top repositories by event count
+curl "http://localhost:8000/top-repos?limit=10&min_events=5"
+
+# Query user sessions
+curl "http://localhost:8000/user-sessions?limit=5&min_duration_minutes=1"
+```
+
+### Data Persistence
+
+The Docker Compose setup automatically:
+- Mounts `./data:/app/data` inside the container
+- Ensures raw JSONL files persist in `data/raw/`
+- Ensures DuckDB database persists in `data/duckdb/`
+- Container restarts do not lose any data
+
+### Manual Docker Build and Run
+
+If you prefer to build and run the Docker image manually:
+
+```bash
+# Build the image
+docker build -t github-events-pipeline .
+
+# Run the container
+docker run -p 8000:8000 -v $(pwd)/data:/app/data github-events-pipeline
+```
+
 ## API Endpoints
 
 ### Health Check
