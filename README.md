@@ -10,8 +10,12 @@ app/
   ingest.py         # GitHub API event fetching and enrichment
   load.py           # JSONL to DuckDB loader with idempotent deduplication
   db.py             # DuckDB connection and initialization helpers
+  analytics.py      # Analytics queries (top repos, user sessions)
   sql/
-    schema.sql      # Database schema (events, loaded_files tables)
+    schema.sql              # Database schema (events, loaded_files tables)
+    top_repos.sql           # Query for top repositories by event count
+    user_sessions.sql       # Query for user activity sessions
+    repo_events_nested.sql  # Nested repo events query
   __pycache__/
 data/
   raw/              # Immutable JSONL batch files (events_YYYYMMDD_HHMMSS_batch_NNN.jsonl)
@@ -102,11 +106,11 @@ curl -X POST http://localhost:8000/ingest
 # Load JSONL files into DuckDB
 curl -X POST http://localhost:8000/load
 
-# Query top repositories by event count
-curl "http://localhost:8000/top-repos?limit=10&min_events=5"
+# Query top repositories by event count (days=7, limit=10)
+curl "http://localhost:8000/top-repos?days=7&limit=10"
 
-# Query user sessions
-curl "http://localhost:8000/user-sessions?limit=5&min_duration_minutes=1"
+# Query user sessions (days=7, limit=5)
+curl "http://localhost:8000/user-sessions?days=7&limit=5"
 ```
 
 ### Data Persistence
@@ -189,6 +193,7 @@ POST /load
   "loaded_files": 5,
   "skipped_files": 5,
   "inserted_events": 750,
+  "duration_ms": 1234,
   "db_path": "data/duckdb/github_events.duckdb"
 }
 ```
@@ -201,6 +206,36 @@ POST /load
 - Inserts events into `events` table with deduplication by `event_id`
 - Tracks loaded files in `loaded_files` table (prevents re-processing)
 - Uses transactions per file (rollback on failure, continues with next file)
+
+
+### Top Repositories
+
+Returns top repositories by event count within a time window.
+
+```bash
+GET /top-repos?days=7&limit=10
+```
+
+**Query parameters:**
+- `days` (optional, default: 7) — Number of days back to include (must be > 0)
+- `limit` (optional, default: 10) — Maximum number of repositories to return (must be > 0)
+
+**Response:** JSON array of objects with `repo_name`, `total_events`, `unique_users`, `push_events`, `first_event_at`, `last_event_at`, `processed_at`.
+
+
+### User Sessions
+
+Returns user sessions based on activity patterns (sessions are sequences of events with no more than 30 minutes of inactivity between consecutive events).
+
+```bash
+GET /user-sessions?days=7&limit=50
+```
+
+**Query parameters:**
+- `days` (optional, default: 7) — Number of days back to include (must be > 0)
+- `limit` (optional, default: 50) — Maximum number of sessions to return (must be > 0)
+
+**Response:** JSON array of objects with `actor_login`, `session_id`, `session_start_at`, `session_end_at`, `events_in_session`.
 
 
 ## Running Tests
