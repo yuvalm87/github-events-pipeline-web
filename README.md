@@ -5,23 +5,23 @@ A FastAPI service that ingests GitHub public events and loads them into DuckDB f
 ## Project Structure
 
 ```
-app/
-  main.py           # FastAPI application with endpoints
-  ingest.py         # GitHub API event fetching and enrichment
-  load.py           # JSONL to DuckDB loader with idempotent deduplication
-  db.py             # DuckDB connection and initialization helpers
-  analytics.py      # Analytics queries (top repos, user sessions)
-  sql/
-    schema.sql              # Database schema (events, loaded_files tables)
-    top_repos.sql           # Query for top repositories by event count
-    user_sessions.sql       # Query for user activity sessions
-    repo_events_nested.sql  # Nested repo events query
-  __pycache__/
+app/                  # Backend (FastAPI)
+  main.py             # FastAPI application with endpoints
+  ingest.py           # GitHub API event fetching and enrichment
+  load.py             # JSONL to DuckDB loader with idempotent deduplication
+  db.py               # DuckDB connection and initialization helpers
+  analytics.py        # Analytics queries (top repos, user sessions)
+  sql/                # Schema and analytics SQL
 data/
-  raw/              # Immutable JSONL batch files (events_YYYYMMDD_HHMMSS_batch_NNN.jsonl)
-  duckdb/           # DuckDB database file (created on first load)
-requirements.txt    # Python dependencies
-README.md           # This file
+  raw/                # Immutable JSONL batch files (events_YYYYMMDD_HHMMSS_batch_NNN.jsonl)
+  duckdb/             # DuckDB database file (created on first load)
+frontend/             # React (Vite + TypeScript) docs and API Playground
+  src/
+    pages/            # Overview, Playground, Deep Dives
+    components/       # Layout, MermaidDiagram
+    api/              # API client
+requirements.txt      # Python dependencies
+README.md             # This file
 ```
 
 ## Setup
@@ -66,6 +66,26 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
 The API will be available at `http://localhost:8000`.
+
+## Local development (backend + frontend)
+
+To run the **documentation site and API Playground** together with the backend:
+
+1. **Start the backend** (from repo root):
+   ```bash
+   uvicorn app.main:app --host 0.0.0.0 --port 8000
+   ```
+   API: `http://localhost:8000`
+
+2. **Start the frontend** (in a second terminal):
+   ```bash
+   cd frontend
+   npm install
+   npm run dev
+   ```
+   The Vite dev server runs (e.g. at `http://localhost:5173`) and proxies `/api/*` to `http://localhost:8000`, so the Playground and docs can call the API without CORS.
+
+3. **Open** the frontend URL in your browser (e.g. `http://localhost:5173`). Use **Overview** for the end-to-end flow, **Playground** to call all endpoints (health, ingest, load, top-repos, user-sessions), and **Deep Dives** for detailed docs (Ingestion, Loading, Analytics, API, Tests, Docker).
 
 ## Running with Docker
 
