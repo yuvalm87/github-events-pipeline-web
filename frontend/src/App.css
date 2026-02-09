@@ -143,6 +143,140 @@
   background: #2a2a2a;
 }
 
+/* Playground */
+.playground-page {
+  max-width: 960px;
+}
+
+.playground-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.playground-tab {
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  border: 1px solid #444;
+  background: #2a2a2a;
+  color: #ccc;
+  cursor: pointer;
+}
+
+.playground-tab:hover {
+  background: #333;
+  color: #fff;
+}
+
+.playground-tab.active {
+  background: #444;
+  color: #fff;
+  border-color: #646cff;
+}
+
+.playground-request .request-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-end;
+  margin-bottom: 0.75rem;
+}
+
+.playground-request .request-row label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.9rem;
+}
+
+.playground-request .request-input {
+  padding: 0.4rem 0.6rem;
+  min-width: 120px;
+  border-radius: 4px;
+  border: 1px solid #444;
+  background: #1a1a1a;
+  color: #fff;
+}
+
+.playground-request .request-input.method-readonly {
+  opacity: 0.9;
+  min-width: 80px;
+}
+
+.playground-request .query-row .query-input {
+  min-width: 80px;
+}
+
+.playground-request .body-label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin: 0.75rem 0;
+}
+
+.playground-request .request-body {
+  font-family: ui-monospace, monospace;
+  font-size: 0.85rem;
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #444;
+  background: #1a1a1a;
+  color: #fff;
+  min-height: 80px;
+}
+
+.send-btn {
+  margin-top: 0.5rem;
+}
+
+.playground-response .response-meta {
+  display: flex;
+  gap: 1rem;
+  margin: 0.5rem 0;
+  font-size: 0.9rem;
+}
+
+.response-json-wrap {
+  position: relative;
+  margin-top: 0.5rem;
+}
+
+.response-json-wrap .copy-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.8rem;
+}
+
+.playground-history .history-list {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 0 0;
+}
+
+.history-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid #333;
+  font-size: 0.85rem;
+}
+
+.history-summary {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.history-load-btn {
+  padding: 0.2rem 0.5rem;
+  font-size: 0.8rem;
+}
+
 .logo {
   height: 6em;
   padding: 1.5em;
