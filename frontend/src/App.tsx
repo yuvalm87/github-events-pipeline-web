@@ -1,57 +1,31 @@
-import { useState } from 'react'
-import { getHealth } from './api/client'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { Layout } from './components/Layout'
+import { Overview } from './pages/Overview'
+import { Playground } from './pages/Playground'
+import { Ingestion } from './pages/deep-dive/Ingestion'
+import { Loading } from './pages/deep-dive/Loading'
+import { Analytics } from './pages/deep-dive/Analytics'
+import { Api } from './pages/deep-dive/Api'
+import { Tests } from './pages/deep-dive/Tests'
+import { Docker } from './pages/deep-dive/Docker'
 import './App.css'
 
 function App() {
-  const [healthStatus, setHealthStatus] = useState<string | null>(null)
-  const [healthJson, setHealthJson] = useState<string | null>(null)
-  const [healthError, setHealthError] = useState<string | null>(null)
-  const [healthLoading, setHealthLoading] = useState(false)
-
-  async function handleCheckHealth() {
-    setHealthLoading(true)
-    setHealthError(null)
-    setHealthStatus(null)
-    setHealthJson(null)
-    try {
-      const data = await getHealth()
-      setHealthStatus(data.status ?? 'OK')
-      setHealthJson(JSON.stringify(data, null, 2))
-    } catch (err) {
-      setHealthError(err instanceof Error ? err.message : String(err))
-    } finally {
-      setHealthLoading(false)
-    }
-  }
-
   return (
-    <div className="app">
-      <h1>GitHub Events Pipeline</h1>
-
-      <section className="section health-section">
-        <h2>Health</h2>
-        <button
-          type="button"
-          onClick={handleCheckHealth}
-          disabled={healthLoading}
-        >
-          {healthLoading ? 'Checking…' : 'Check health'}
-        </button>
-        {healthError && (
-          <div className="status error" role="alert">
-            {healthError}
-          </div>
-        )}
-        {healthStatus != null && !healthError && (
-          <>
-            <div className="status success">Status: {healthStatus}</div>
-            {healthJson && (
-              <pre className="json-block">{healthJson}</pre>
-            )}
-          </>
-        )}
-      </section>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Overview />} />
+          <Route path="playground" element={<Playground />} />
+          <Route path="deep-dive/ingestion" element={<Ingestion />} />
+          <Route path="deep-dive/loading" element={<Loading />} />
+          <Route path="deep-dive/analytics" element={<Analytics />} />
+          <Route path="deep-dive/api" element={<Api />} />
+          <Route path="deep-dive/tests" element={<Tests />} />
+          <Route path="deep-dive/docker" element={<Docker />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   )
 }
 
