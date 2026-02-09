@@ -133,7 +133,12 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
   overflow-x: auto;
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-md);
+  border-top: 3px solid var(--color-primary);
+  transition: box-shadow var(--transition-smooth);
+}
+.doc-content .mermaid-container:hover {
+  box-shadow: var(--shadow-lg);
 }
 
 .doc-content .mermaid-error {
@@ -172,7 +177,8 @@
   border-radius: var(--radius);
   overflow-x: auto;
   font-size: 0.85rem;
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-md);
+  border-left: 4px solid var(--color-primary);
 }
 
 .doc-content pre code {
@@ -187,7 +193,8 @@
   margin: 1rem 0;
   border-radius: var(--radius);
   overflow: hidden;
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--color-border);
 }
 
 .doc-content th,
@@ -372,14 +379,20 @@
   }
 }
 
+/* Card design: stronger shadows, hover elevation, colored top accent */
 .section {
   margin: 1.5rem 0;
-  padding: 1.25rem;
+  padding: 1.25rem 1.5rem;
   text-align: left;
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
   background: var(--color-surface);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-md);
+  border-top: 4px solid var(--color-primary);
+  transition: box-shadow var(--transition-smooth), transform var(--transition-smooth);
+}
+.section:hover {
+  box-shadow: var(--shadow-card-hover);
 }
 
 .section h2 {
@@ -394,25 +407,26 @@
 }
 
 .status.success {
-  background: #ecfdf5;
-  color: #047857;
-  border: 1px solid #a7f3d0;
+  background: var(--color-success-subtle);
+  color: var(--color-success);
+  border: 1px solid rgba(5, 150, 105, 0.3);
 }
 
 .status.error {
-  background: #fef2f2;
-  color: #dc2626;
-  border: 1px solid #fecaca;
+  background: var(--color-error-subtle);
+  color: var(--color-error);
+  border: 1px solid rgba(220, 38, 38, 0.3);
 }
 
 .json-block {
   margin-top: 0.75rem;
-  padding: 1rem;
+  padding: 1rem 1.25rem;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius);
   overflow-x: auto;
   font-size: 0.9rem;
   color: var(--color-text);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-md);
+  border-left: 4px solid var(--color-primary);
 }
