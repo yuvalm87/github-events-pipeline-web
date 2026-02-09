@@ -21,3 +21,21 @@ data/db/
 *AUDIT*.md
 *COMPLIANCE*.md
 *VERIFICATION*.md
+
+# Local python env / caches
+.venv/
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local data artifacts
+data/raw/
+data/duckdb/
+*.db
+*.duckdb
+
+# OS / IDE
+.DS_Store
+.vscode/
+.idea/
