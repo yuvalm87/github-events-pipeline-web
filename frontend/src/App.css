@@ -33,10 +33,39 @@
   }
 }
 
-.card {
-  padding: 2em;
+.section {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  text-align: left;
+  border: 1px solid #333;
+  border-radius: 8px;
 }
 
-.read-the-docs {
-  color: #888;
+.section h2 {
+  margin-top: 0;
+}
+
+.status {
+  margin-top: 0.75rem;
+  padding: 0.5rem;
+  border-radius: 4px;
+}
+
+.status.success {
+  background: #1a2e1a;
+  color: #8f8;
+}
+
+.status.error {
+  background: #2e1a1a;
+  color: #f88;
+}
+
+.json-block {
+  margin-top: 0.75rem;
+  padding: 1rem;
+  background: #1a1a1a;
+  border-radius: 4px;
+  overflow-x: auto;
+  font-size: 0.9rem;
 }

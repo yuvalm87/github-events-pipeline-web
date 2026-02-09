@@ -1,34 +1,57 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { getHealth } from './api/client'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [healthStatus, setHealthStatus] = useState<string | null>(null)
+  const [healthJson, setHealthJson] = useState<string | null>(null)
+  const [healthError, setHealthError] = useState<string | null>(null)
+  const [healthLoading, setHealthLoading] = useState(false)
+
+  async function handleCheckHealth() {
+    setHealthLoading(true)
+    setHealthError(null)
+    setHealthStatus(null)
+    setHealthJson(null)
+    try {
+      const data = await getHealth()
+      setHealthStatus(data.status ?? 'OK')
+      setHealthJson(JSON.stringify(data, null, 2))
+    } catch (err) {
+      setHealthError(err instanceof Error ? err.message : String(err))
+    } finally {
+      setHealthLoading(false)
+    }
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
+    <div className="app">
+      <h1>GitHub Events Pipeline</h1>
+
+      <section className="section health-section">
+        <h2>Health</h2>
+        <button
+          type="button"
+          onClick={handleCheckHealth}
+          disabled={healthLoading}
+        >
+          {healthLoading ? 'Checking…' : 'Check health'}
         </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+        {healthError && (
+          <div className="status error" role="alert">
+            {healthError}
+          </div>
+        )}
+        {healthStatus != null && !healthError && (
+          <>
+            <div className="status success">Status: {healthStatus}</div>
+            {healthJson && (
+              <pre className="json-block">{healthJson}</pre>
+            )}
+          </>
+        )}
+      </section>
+    </div>
   )
 }
 
