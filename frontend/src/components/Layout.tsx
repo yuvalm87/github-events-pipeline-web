@@ -25,7 +25,7 @@ export function Layout() {
         <h1 className="sidebar-title">GitHub Events Pipeline</h1>
         <nav className="sidebar-nav">
           {nav.map((item) =>
-            'children' in item ? (
+            'children' in item && item.children ? (
               <div key={item.label} className="nav-group">
                 <span className="nav-group-label">{item.label}</span>
                 {item.children.map((c) => (

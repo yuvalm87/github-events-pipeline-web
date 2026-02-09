@@ -76,6 +76,43 @@
   margin-top: 0;
 }
 
+.doc-content {
+  margin-top: 1rem;
+}
+
+.doc-content .mermaid-container {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background: #1a1a1a;
+  border-radius: 8px;
+  overflow-x: auto;
+}
+
+.doc-content .mermaid-error {
+  color: #f88;
+  margin: 0;
+}
+
+.doc-content .mermaid svg {
+  max-width: 100%;
+}
+
+.doc-content p {
+  margin: 0.75rem 0;
+}
+
+.doc-content ul {
+  margin: 0.75rem 0;
+  padding-left: 1.5rem;
+}
+
+.doc-content code {
+  background: #2a2a2a;
+  padding: 0.2em 0.4em;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
 .logo {
   height: 6em;
   padding: 1.5em;
