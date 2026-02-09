@@ -1,11 +1,6 @@
 import { useEffect, useRef } from 'react'
 import mermaid from 'mermaid'
-
-mermaid.initialize({
-  startOnLoad: false,
-  theme: 'dark',
-  securityLevel: 'loose',
-})
+import { initMermaid, applyOverviewSectionColors } from '../lib/mermaid'
 
 interface MermaidDiagramProps {
   chart: string
@@ -18,14 +13,20 @@ export function MermaidDiagram({ chart, id: idProp }: MermaidDiagramProps) {
 
   useEffect(() => {
     if (!containerRef.current || !chart.trim()) return
+    initMermaid()
     containerRef.current.innerHTML = ''
     const pre = document.createElement('pre')
     pre.className = 'mermaid'
     pre.textContent = chart
     containerRef.current.appendChild(pre)
-    mermaid.run({ nodes: [pre], suppressErrors: true }).catch(() => {
-      if (containerRef.current) containerRef.current.innerHTML = '<p class="mermaid-error">Diagram failed to render.</p>'
-    })
+    mermaid
+      .run({ nodes: [pre], suppressErrors: true })
+      .then(() => {
+        if (id === 'overview-flow') applyOverviewSectionColors(containerRef.current)
+      })
+      .catch(() => {
+        if (containerRef.current) containerRef.current.innerHTML = '<p class="mermaid-error">Diagram failed to render.</p>'
+      })
   }, [chart])
 
   return <div ref={containerRef} className="mermaid-container" data-diagram-id={id} />

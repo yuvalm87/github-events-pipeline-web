@@ -146,8 +146,28 @@
   margin: 0;
 }
 
-.doc-content .mermaid svg {
+.doc-content .mermaid svg,
+.mermaid-container svg {
   max-width: 100%;
+  height: auto;
+}
+
+/* Overview diagram: color-code clusters by section (data-section set by applyOverviewSectionColors) */
+.mermaid-container[data-diagram-id="overview-flow"] g.cluster[data-section="external"] > rect {
+  fill: #f1f5f9;
+  stroke: #94a3b8;
+}
+.mermaid-container[data-diagram-id="overview-flow"] g.cluster[data-section="ingestion"] > rect {
+  fill: #ccfbf1;
+  stroke: var(--color-ingestion);
+}
+.mermaid-container[data-diagram-id="overview-flow"] g.cluster[data-section="storage"] > rect {
+  fill: var(--color-secondary-subtle);
+  stroke: var(--color-loading);
+}
+.mermaid-container[data-diagram-id="overview-flow"] g.cluster[data-section="output"] > rect {
+  fill: #ffedd5;
+  stroke: var(--color-api);
 }
 
 .doc-content p {
